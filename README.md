@@ -8,7 +8,7 @@ WhatsApp AI assistants on a business's real WhatsApp line.
 ## Install
 
 ```bash
-npx skills add suelta/agent-skills
+npx skills add getsuelta/agent-skills
 ```
 
 ## Requirements
