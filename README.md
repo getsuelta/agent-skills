@@ -2,7 +2,7 @@
 
 [Agent Skills](https://agentskills.io) that let AI coding agents — Claude
 Code, Cursor, Codex, and any other skills-compatible agent — operate
-[Suelta](https://suelta.co) in natural language: build, test, and publish
+[Suelta](https://getsuelta.com) in natural language: build, test, and publish
 WhatsApp AI assistants on a business's real WhatsApp line.
 
 ## Install
@@ -22,7 +22,7 @@ npx skills add suelta/agent-skills
   sends spend real Meta quota).
 
 ```bash
-export SUELTA_API_URL=https://api.suelta.co
+export SUELTA_API_URL=https://api.getsuelta.com
 export SUELTA_API_KEY=suelta_sk_...
 ```
 

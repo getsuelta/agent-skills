@@ -13,7 +13,7 @@ drives the full flow lifecycle over Suelta's REST API with a machine credential.
 Two environment variables:
 
 ```
-SUELTA_API_URL=https://api.suelta.co     # no trailing slash
+SUELTA_API_URL=https://api.getsuelta.com     # no trailing slash
 SUELTA_API_KEY=suelta_sk_...             # created by the user in the web app
 ```
 

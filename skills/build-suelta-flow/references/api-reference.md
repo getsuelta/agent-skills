@@ -1,6 +1,6 @@
 # Suelta API reference (flow lifecycle surface)
 
-Base URL: `$SUELTA_API_URL` (production: `https://api.suelta.co`). All routes
+Base URL: `$SUELTA_API_URL` (production: `https://api.getsuelta.com`). All routes
 below are under `/api/me`. Auth: `Authorization: Bearer $SUELTA_API_KEY`.
 Content type: `application/json` both ways.
 
