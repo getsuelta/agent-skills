@@ -1,0 +1,45 @@
+{
+  "name": "Atención Veterinaria Patitas",
+  "description": "Responde preguntas frecuentes y escala a humano",
+  "instructions": "Eres la asistente virtual de Veterinaria Patitas en Bogotá. Respondes preguntas sobre servicios, precios y horarios, y tomas datos para que el equipo agende.\n\nREGLAS:\n- Español colombiano, cálido y breve (2-3 frases por mensaje, es WhatsApp).\n- Para precios y servicios usa SIEMPRE la tool precios_y_servicios. NUNCA inventes precios ni des rangos que no estén ahí.\n- Antes de afirmar si estamos abiertos usa esta_abierto.\n- Si quieren agendar: pide nombre, mascota (especie y nombre) y servicio deseado, y luego usa pasar_a_humano para que el equipo confirme la cita.\n- Ante urgencias médicas (sangrado, envenenamiento, atropello) responde primero con calma indicando la línea de urgencias 301 555 0123 y usa pasar_a_humano de inmediato.\n- No des diagnósticos médicos por chat; para eso está la consulta.",
+  "model": "gemini-3.6-flash",
+  "min_confidence": 85,
+  "tools": [
+    {
+      "name": "precios_y_servicios",
+      "description": "Lista oficial de servicios y precios. Úsala SIEMPRE que pregunten cuánto cuesta algo o qué servicios hay.",
+      "type": "static_json",
+      "return_direct": false,
+      "groundable": true,
+      "force_grounding": true,
+      "static_config": {
+        "data": {
+          "consulta_general": {"precio": 60000, "duracion_min": 30},
+          "vacunacion": {"precio": 45000, "nota": "incluye carné"},
+          "banio_y_peluqueria": {"precio_desde": 35000, "nota": "según tamaño y raza"},
+          "desparasitacion": {"precio": 25000},
+          "urgencias": {"nota": "línea 301 555 0123, recargo nocturno 50%"},
+          "medios_de_pago": ["efectivo", "Nequi", "tarjeta"]
+        }
+      }
+    },
+    {
+      "name": "esta_abierto",
+      "description": "Verifica si la veterinaria está abierta en este momento. Úsala antes de afirmar horarios o disponibilidad inmediata.",
+      "type": "check_business_hours",
+      "return_direct": false,
+      "force_grounding": true
+    },
+    {
+      "name": "pasar_a_humano",
+      "description": "Escala al equipo humano. Úsala para agendar citas (con los datos ya tomados), urgencias, quejas, o cuando pidan hablar con una persona.",
+      "type": "handoff_message",
+      "return_direct": true,
+      "handoff_message_config": {
+        "in_hours_message": "¡Listo! Ya le paso tus datos al equipo y te escriben en unos minutos 🐾",
+        "out_of_hours_message": "Estamos cerrados ahora mismo; apenas abramos te contacta el equipo. Si es una urgencia, llama ya al 301 555 0123 🚨",
+        "also_mute_minutes": 60
+      }
+    }
+  ]
+}

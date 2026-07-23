@@ -1,0 +1,88 @@
+{
+  "name": "Citas Barbería Don Julio",
+  "description": "Agenda, consulta y reagenda citas por WhatsApp",
+  "instructions": "Eres la asistente virtual de Barbería Don Julio en Cali. Tu único trabajo es agendar, consultar y reagendar citas.\n\nREGLAS:\n- Saluda cálido y breve, en español colombiano. Máximo 2-3 frases por mensaje: esto es WhatsApp, no email.\n- Para dar horarios disponibles usa SIEMPRE la tool consultar_disponibilidad. NUNCA inventes horarios ni digas 'creo que hay espacio'.\n- Antes de crear la cita confirma: servicio, día y hora exacta, y nombre del cliente. Luego usa crear_cita con el título 'Corte - <nombre>' y la hora en formato ISO 8601 con zona -05:00.\n- Si el cliente pregunta por SU cita existente, usa buscar_cita (busca por su número automáticamente). Para cambiarla usa reagendar_cita con el event_id que devolvió buscar_cita.\n- Precios: corte $25.000, barba $15.000, combo $35.000. Solo efectivo y Nequi.\n- Si piden algo fuera de citas y precios (quejas, trabajo, proveedores), usa pasar_a_humano.\n- Nunca confirmes una cita sin haber llamado crear_cita y recibido éxito.",
+  "model": "gemini-3.6-flash",
+  "min_confidence": 85,
+  "operating_hours": {
+    "days": ["tue", "wed", "thu", "fri", "sat"],
+    "from": "08:00",
+    "to": "19:00"
+  },
+  "tools": [
+    {
+      "name": "consultar_disponibilidad",
+      "description": "Consulta los horarios disponibles para agendar una cita. Úsala SIEMPRE que el cliente pregunte cuándo hay espacio o proponga un día.",
+      "type": "gcal_availability",
+      "return_direct": false,
+      "parameters": [
+        {"name": "start_date", "type": "string", "description": "Fecha de inicio YYYY-MM-DD. Si no se da, hoy.", "required": false},
+        {"name": "end_date", "type": "string", "description": "Fecha de fin YYYY-MM-DD. Si no se da, hoy + 7 días.", "required": false},
+        {"name": "duration_minutes", "type": "number", "description": "Duración de la cita en minutos si difiere del default.", "required": false}
+      ],
+      "gcal_availability_config": {
+        "duration_minutes": 30,
+        "buffer_before_minutes": 10,
+        "business_hours": {
+          "tue": {"ranges": [{"from": "09:00", "to": "19:00"}]},
+          "wed": {"ranges": [{"from": "09:00", "to": "19:00"}]},
+          "thu": {"ranges": [{"from": "09:00", "to": "19:00"}]},
+          "fri": {"ranges": [{"from": "09:00", "to": "19:00"}]},
+          "sat": {"ranges": [{"from": "08:00", "to": "13:00"}, {"from": "14:00", "to": "18:00"}]}
+        }
+      }
+    },
+    {
+      "name": "crear_cita",
+      "description": "Crea la cita en el calendario. Úsala solo después de confirmar servicio, día, hora y nombre con el cliente.",
+      "type": "gcal_create_event",
+      "return_direct": false,
+      "parameters": [
+        {"name": "summary", "type": "string", "description": "Título del evento, formato 'Corte - <nombre del cliente>'.", "required": true},
+        {"name": "start_time", "type": "string", "description": "Inicio en ISO 8601 con zona horaria (ej: 2026-08-04T10:00:00-05:00).", "required": true},
+        {"name": "end_time", "type": "string", "description": "Fin en ISO 8601 con zona horaria.", "required": true},
+        {"name": "description", "type": "string", "description": "Servicio pedido y teléfono del cliente.", "required": false}
+      ],
+      "gcal_config": {
+        "calendar_id": "REPLACE_WITH_CALENDAR_ID_FROM_GET_integrations_gcal_calendars",
+        "calendar_name": "Citas"
+      }
+    },
+    {
+      "name": "buscar_cita",
+      "description": "Busca la próxima cita futura del contacto actual (por su número de WhatsApp). Úsala cuando pregunten '¿a qué hora era mi cita?' o quieran cambiarla.",
+      "type": "gcal_find_event",
+      "return_direct": false,
+      "gcal_config": {
+        "calendar_id": "REPLACE_WITH_CALENDAR_ID_FROM_GET_integrations_gcal_calendars",
+        "calendar_name": "Citas"
+      }
+    },
+    {
+      "name": "reagendar_cita",
+      "description": "Cambia fecha/hora de una cita existente sin cancelarla. Requiere el event_id devuelto por buscar_cita.",
+      "type": "gcal_update_event",
+      "return_direct": false,
+      "parameters": [
+        {"name": "event_id", "type": "string", "description": "ID del evento a modificar (obtenido de buscar_cita).", "required": true},
+        {"name": "start_time", "type": "string", "description": "Nueva hora de inicio en ISO 8601 con zona horaria.", "required": true},
+        {"name": "end_time", "type": "string", "description": "Nueva hora de fin en ISO 8601 con zona horaria.", "required": true}
+      ],
+      "gcal_config": {
+        "calendar_id": "REPLACE_WITH_CALENDAR_ID_FROM_GET_integrations_gcal_calendars",
+        "calendar_name": "Citas"
+      }
+    },
+    {
+      "name": "pasar_a_humano",
+      "description": "Escala a una persona del equipo. Úsala ante quejas, temas de trabajo/proveedores, o cuando el cliente pida explícitamente hablar con alguien.",
+      "type": "handoff_message",
+      "return_direct": true,
+      "handoff_message_config": {
+        "in_hours_message": "Claro, ya le aviso a Julio para que te escriba en un momento 💈",
+        "out_of_hours_message": "En este momento estamos cerrados, pero apenas abramos (mar-sáb) te escribe alguien del equipo 🙌",
+        "also_mute_minutes": 120
+      }
+    }
+  ]
+}

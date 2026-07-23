@@ -1,0 +1,28 @@
+{
+  "name": "consultar_pedido",
+  "description": "Consulta el estado de un pedido en el sistema del negocio por su número. Úsala cuando el cliente pregunte por su pedido, dónde va, o cuándo llega.",
+  "type": "http_request",
+  "return_direct": false,
+  "parameters": [
+    {
+      "name": "order_id",
+      "type": "string",
+      "description": "Número de pedido tal como aparece en el comprobante (ej: PED-10432). Pídelo al cliente si no lo ha dado.",
+      "required": true
+    }
+  ],
+  "http_config": {
+    "url": "https://api.mi-negocio.com/v1/orders/{order_id}",
+    "method": "GET",
+    "headers": {
+      "X-Api-Key": "REPLACE_WITH_BUSINESS_API_KEY",
+      "Accept": "application/json"
+    },
+    "param_location": {
+      "order_id": "path"
+    }
+  },
+  "transform": {
+    "expression": "{\"estado\": response.status, \"llega\": response.eta, \"transportadora\": response.carrier}"
+  }
+}

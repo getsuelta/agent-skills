@@ -1,0 +1,20 @@
+{
+  "_usage": "Bodies for PATCH /api/me/flows/{id}/canary (scope flows:publish). Pick ONE of the three below — send its value as the whole request body.",
+
+  "allowlist_owner_first": {
+    "_when": "Right after first publish: only these phones reach the new flow. Start with the business owner's own number.",
+    "mode": "allowlist",
+    "allowlist_phones": ["+573001234567"]
+  },
+
+  "percent_gradual": {
+    "_when": "Gradual rollout: this % of contacts get the flow, sticky per contact per day. Raise 10 -> 50 -> clear.",
+    "mode": "percent",
+    "percent_quota": 10
+  },
+
+  "clear_full_traffic": {
+    "_when": "Remove the canary entirely -> 100% of the flow's audience is served. Send an EMPTY body: {}",
+    "_body": {}
+  }
+}
