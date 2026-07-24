@@ -20,8 +20,13 @@ SUELTA_API_KEY=suelta_sk_...             # created by the user in the web app
 Auth on every request: `Authorization: Bearer $SUELTA_API_KEY`. JSON in, JSON out.
 
 If there is no key: keys can ONLY be created by a human in the Suelta web app
-(**Settings → Llaves de API**). Ask the user to create one with these scopes,
-then export it:
+(**Settings → Llaves de API**) — name it, click *Crear llave*, copy the key.
+The default key is `full_access`, which covers everything this skill does.
+The plaintext is shown exactly once.
+
+If the user restricted the key's scopes (*Personalizar permisos*), these are
+the ones each part of this skill needs — a 403 with `missing_scope` names the
+one to add:
 
 | Scope | Needed for |
 |---|---|
@@ -30,9 +35,7 @@ then export it:
 | `flows:publish` | publish, revert, enable, canary, audience |
 | `settings:read` | WhatsApp status, integrations status |
 | `settings:write` | start Google Calendar OAuth |
-| `messages:send` | (optional) outbound template sends — **spends money** |
-
-`full_access` covers all of the above. The plaintext key is shown exactly once.
+| `messages:send` | outbound template sends — **spends money** |
 
 Smoke test: `GET /api/me/profile` → 200 means the key works.
 

@@ -16,10 +16,9 @@ npx skills add getsuelta/agent-skills
 - A Suelta account with its WhatsApp line connected (or the skill will walk
   the user through connecting it).
 - A Suelta API key, created by the account owner in the web app under
-  **Settings → Llaves de API**. Recommended scopes: `flows:read`,
-  `flows:write`, `flows:publish`, `settings:read`, `settings:write`
-  (add `messages:send` only if the agent should send outbound messages —
-  sends spend real Meta quota).
+  **Settings → Llaves de API** — name it, click *Crear llave*, done. Keys
+  default to full access, which covers everything this skill does; scopes can
+  optionally be restricted via *Personalizar permisos*.
 
 ```bash
 export SUELTA_API_URL=https://api.getsuelta.com
