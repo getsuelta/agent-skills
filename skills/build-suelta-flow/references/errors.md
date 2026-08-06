@@ -41,7 +41,8 @@ Spanish — Suelta serves LATAM businesses).
 | 400 `contact_phone: required` / `contact_phone: invalid` | Missing or non-E.164 phone | Any valid `+<country><number>` test number |
 | 400 empty `user_message` | `user_message` is required | Provide the turn's message |
 | 403 `{"error":"test_chat_limit_reached"}` | Onboarding lifetime cap (50 messages) exhausted | Account needs activation to continue testing |
-| 500 `error al procesar mensaje`-style | Agent/LLM runtime failure (bad LLM key, provider outage, tool exploding) | Check `GET /llm-keys`; try once more; inspect `GET /agent-events` if the flow is live |
+| 502 `{"error":"llm_provider_error","provider":"google","provider_code":429,"detail":"..."}` | The tenant's own LLM provider rejected the call — `detail` carries the provider's message (invalid key, quota, monthly spending cap, outage) | Not a Suelta bug and not retryable until fixed at the provider: the user resolves it in their provider console (e.g. Gemini spend cap at https://ai.studio/spend), swaps the key via `PUT /llm-keys`, or switches the flow's model to a provider with a working key |
+| 500 `error al procesar mensaje`-style | Agent runtime failure other than an LLM provider error (tool exploding, infra) | Try once more; if it persists, report route + body (minus the key) to the user; inspect `GET /agent-events` if the flow is live |
 
 ## Messages (POST /messages/template)
 
@@ -55,7 +56,7 @@ Spanish — Suelta serves LATAM businesses).
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `connected:false` after user says they finished OAuth | Consent not completed, or wrong Google account | Re-issue `POST /integrations/gcal/connect`, have them redo consent |
+| `connected:false` after user says they finished OAuth | Consent not completed, or wrong Google account | Have them redo the connection at https://app.getsuelta.com/app/integrations (check the Google account) |
 | `verify` returns `connected:true` but `events_this_week: []` | Token fine; calendar simply has no events (or a transient Google API error was swallowed) | Not an error |
 | gcal tools missing from `GET /tool-types` | gcal not connected | Run the calendar preflight |
 

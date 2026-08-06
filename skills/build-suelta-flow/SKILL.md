@@ -34,7 +34,7 @@ one to add:
 | `flows:write` | create flows, edit drafts/tools, test-chat |
 | `flows:publish` | publish, revert, enable, canary, audience |
 | `settings:read` | WhatsApp status, integrations status |
-| `settings:write` | start Google Calendar OAuth |
+| `settings:write` | set LLM provider keys (`PUT /api/me/llm-keys`) |
 | `messages:send` | outbound template sends — **spends money** |
 
 Smoke test: `GET /api/me/profile` → 200 means the key works.
@@ -65,10 +65,12 @@ Smoke test: `GET /api/me/profile` → 200 means the key works.
      **Conectar WhatsApp**, then re-check status and continue.
 2. Only if the flow will handle appointments/bookings (calendar tools):
    `GET /api/me/integrations` → look for `{"id":"gcal","connected":true}`.
-   - If not connected: `POST /api/me/integrations/gcal/connect` → returns
-     `{"auth_url":"https://accounts.google.com/..."}`. Give that URL to the
-     user, wait for them to finish Google consent, then poll
-     `GET /api/me/integrations/gcal/verify` until `connected:true`.
+   - If not connected: tell the user to open
+     **https://app.getsuelta.com/app/integrations** and connect their Google
+     Calendar account there (the web app handles the Google consent), and to
+     let you know when they are done. Do NOT generate an OAuth link yourself.
+     Once they confirm, check `GET /api/me/integrations/gcal/verify` until
+     `connected:true`.
    - Then `GET /api/me/integrations/gcal/calendars` to pick the target
      calendar `id` for the tools' `calendar_id`.
 

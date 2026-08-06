@@ -46,8 +46,9 @@ Live check against Google (refreshes the token):
 ### POST /integrations/gcal/connect — scope: settings:write
 
 No body. Returns `{"auth_url":"https://accounts.google.com/o/oauth2/..."}`.
-Hand the URL to the user; the OAuth callback completes server-side with no
-session. Poll `/integrations/gcal/verify` afterwards.
+Exists, but do NOT use it from this skill: send the user to
+**https://app.getsuelta.com/app/integrations** to connect Google Calendar in
+the web app instead, then poll `/integrations/gcal/verify`.
 
 ### GET /integrations/gcal/calendars — scope: settings:read
 
