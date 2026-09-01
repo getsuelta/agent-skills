@@ -1,8 +1,16 @@
 # Suelta API reference (flow lifecycle surface)
 
-Base URL: `$SUELTA_API_URL` (production: `https://api.getsuelta.com`). All routes
-below are under `/api/me`. Auth: `Authorization: Bearer $SUELTA_API_KEY`.
+Base URL: taken from the `SUELTA_API_URL` environment variable (production:
+`https://api.getsuelta.com`). All routes below are under `/api/me`.
 Content type: `application/json` both ways.
+
+Auth: bearer scheme, with the token read from the `SUELTA_API_KEY` environment
+variable and expanded by the shell at call time — see the credential rule in
+SKILL.md. Never resolve, print, or store the value.
+
+```bash
+curl -sS -H "Authorization: Bearer ${SUELTA_API_KEY}" "${SUELTA_API_URL}/api/me/<route>"
+```
 
 An API key is valid over `/api/me/*` only. `full_access` is a wildcard over
 the scope catalog; it never grants key management, WhatsApp channel
@@ -176,8 +184,15 @@ if the model's provider has no key stored.
 
 | Method | Path | Scope | Body |
 |---|---|---|---|
-| GET | `/llm-keys` | settings:read | → `{"openai_api_key":"sk-...masked"\|null,"gemini_api_key":...}` |
-| PUT | `/llm-keys` | settings:write | `{"openai_api_key":"..."}` and/or `{"gemini_api_key":"..."}`; verified against the provider (422 if invalid); 204 on success |
+| GET | `/llm-keys` | settings:read | → `{"openai_api_key":"sk-...masked"\|null,"gemini_api_key":...}` — masked, use it only to see *which* providers have a key |
+
+Storing a provider key is **out of scope for this skill**. `PUT /llm-keys`
+exists, but a provider key is the user's own third-party secret: it must not
+travel through an agent conversation. Send the user to the web app
+(**Configuración → Claves de API de LLM**, at `/app/settings`) to enter it
+themselves, the same way WhatsApp connect and Google Calendar consent are
+handled. Note this is a different section from **Llaves de API** on the same
+page, which is where Suelta's own API keys are minted.
 
 ## Outbound messages
 
