@@ -37,7 +37,7 @@ server-assigned; omit it on create.
 "http_config": {
   "url": "https://api.example.com/orders/{order_id}",
   "method": "GET",
-  "headers": {"X-Api-Key": "..."},
+  "headers": {"Accept": "application/json"},
   "body_template": "{\"id\": \"{order_id}\"}",
   "param_location": {"order_id": "path"}
 }
@@ -47,6 +47,14 @@ Methods: GET/POST/PUT/PATCH/DELETE. `param_location` maps each parameter name
 to `path` | `query` | `body`. Canonical example with parameters and a
 transform: [assets/tool-http-request.json](../assets/tool-http-request.json).
 Note: in test-chat this fires the REAL request.
+
+**Authenticated endpoints.** If the business's API needs an auth header (an
+API key, a bearer token), that value is the business's own secret and it does
+not go through this conversation: don't ask for it, don't write it into
+`headers`. Create the tool with only non-secret headers and tell the user to
+add the auth header value themselves in the Suelta web app's flow editor;
+until they do, expect the endpoint to answer 401/403 in test-chat. Prefer
+endpoints that don't require a secret when the business has one.
 
 ### static_json — fixed data (price list, address, policies)
 

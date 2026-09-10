@@ -15,7 +15,6 @@
     "url": "https://api.mi-negocio.com/v1/orders/{order_id}",
     "method": "GET",
     "headers": {
-      "X-Api-Key": "REPLACE_WITH_BUSINESS_API_KEY",
       "Accept": "application/json"
     },
     "param_location": {
